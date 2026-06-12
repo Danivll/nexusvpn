@@ -1,0 +1,366 @@
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #020617;
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.nexus-root {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #020617;
+}
+
+/* ─── App container ────────────────────────────────────────────────────────── */
+.nexus-app {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(2, 6, 23, 0.95);
+  overflow: hidden;
+  transition: background 800ms ease;
+}
+
+@media (min-width: 768px) {
+  .nexus-app {
+    height: 800px;
+    border-radius: 2.5rem;
+    border: 1px solid rgba(148,163,184,0.12);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+  }
+}
+
+/* ─── Ambient glow ─────────────────────────────────────────────────────────── */
+.nexus-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  transition: background 1000ms ease;
+}
+.nexus-glow.disconnected { background: rgba(100,116,139,0.08); }
+.nexus-glow.connecting   { background: rgba(99,102,241,0.18); }
+.nexus-glow.connected    { background: rgba(16,185,129,0.15); }
+
+/* ─── Banners ──────────────────────────────────────────────────────────────── */
+.nexus-banner {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 20px;
+  font-size: 12px;
+}
+.nexus-banner.warn  { background: rgba(245,158,11,0.1); border-bottom: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+.nexus-banner.error { background: rgba(239,68,68,0.1);  border-bottom: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+.nexus-banner-sub { opacity: 0.7; }
+.nexus-banner button {
+  margin-left: auto; background: none; border: none;
+  cursor: pointer; color: inherit; opacity: 0.7; padding: 2px;
+}
+.nexus-banner button:hover { opacity: 1; }
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+.nexus-header {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; position: relative; z-index: 20;
+}
+@media (min-width: 768px) { .nexus-header { padding: 28px 40px; } }
+
+.nexus-logo { display: flex; align-items: center; gap: 8px; }
+.nexus-logo-icon.emerald { color: #10b981; }
+.nexus-logo-icon.indigo  { color: #6366f1; }
+.nexus-logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+.nexus-logo-text .emerald { color: #10b981; }
+.nexus-logo-text .indigo  { color: #6366f1; }
+
+.nexus-header-right { display: flex; align-items: center; gap: 12px; }
+.nexus-ip-box { display: flex; flex-direction: column; align-items: flex-end; }
+.nexus-ip-box.exposed { opacity: 0.5; }
+.nexus-ip-label { font-size: 10px; color: #64748b; margin-bottom: 2px; }
+.nexus-ip-box.visible .nexus-ip-label { color: rgba(16,185,129,0.7); }
+.nexus-ip-value { font-size: 13px; font-family: monospace; letter-spacing: 0.05em; color: #e2e8f0; }
+
+.nexus-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.nexus-dot.on  { background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); animation: pulse 2s infinite; }
+.nexus-dot.off { background: #ef4444; }
+
+/* ─── Main ─────────────────────────────────────────────────────────────────── */
+.nexus-main {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  width: 100%; padding: 0 24px; position: relative; z-index: 20; gap: 0;
+}
+
+/* ─── Power Button ─────────────────────────────────────────────────────────── */
+.nexus-btn-wrap {
+  position: relative;
+  width: 256px; height: 256px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+}
+@media (min-width: 640px) { .nexus-btn-wrap { width: 288px; height: 288px; } }
+
+.nexus-ripple {
+  position: absolute; inset: 0;
+  border-radius: 50%; border: 2px solid;
+  animation: ripple 2.5s ease-out infinite;
+}
+.nexus-ripple.r2 { animation-delay: 1.25s; }
+.nexus-ripple.emerald { border-color: #10b981; }
+.nexus-ripple.indigo  { border-color: #6366f1; }
+
+.nexus-power-outer {
+  position: relative; width: 100%; height: 100%;
+  border-radius: 50%; border: 1px solid;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px; cursor: pointer;
+  transition: border-color 500ms, background 500ms;
+  background: none;
+}
+.nexus-power-outer.disconnected { border-color: rgba(30,41,59,0.8);  }
+.nexus-power-outer.connecting   { border-color: rgba(99,102,241,0.3); }
+.nexus-power-outer.connected    { border-color: rgba(16,185,129,0.3); }
+
+.nexus-power-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 500ms;
+  position: relative; overflow: hidden;
+}
+.nexus-power-inner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.07));
+}
+.nexus-power-inner.disconnected { background: #1e293b; color: #94a3b8; }
+.nexus-power-inner.connecting   { background: #4f46e5; color: #fff; }
+.nexus-power-inner.connected    { background: #10b981; color: #fff; }
+
+/* ─── Status ───────────────────────────────────────────────────────────────── */
+.nexus-status-wrap { text-align: center; height: 72px; }
+.nexus-status-title {
+  font-size: 36px; font-weight: 700; letter-spacing: -0.5px;
+  transition: color 500ms;
+}
+.nexus-status-title.disconnected { color: #fff; }
+.nexus-status-title.connecting   { color: #818cf8; }
+.nexus-status-title.connected    { color: #34d399; }
+
+.nexus-status-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; justify-content: center; margin-top: 6px;
+  color: rgba(52,211,153,0.8);
+}
+.nexus-dot-sep { width: 5px; height: 5px; border-radius: 50%; background: #334155; }
+.nexus-status-meta .emerald { color: rgba(52,211,153,0.9); }
+.nexus-status-meta .amber   { color: rgba(251,191,36,0.9); }
+.nexus-status-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+/* ─── Actions ──────────────────────────────────────────────────────────────── */
+.nexus-actions {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-top: 28px;
+}
+@media (min-width: 640px) { .nexus-actions { flex-direction: row; } }
+
+.nexus-location-btn {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid #1e293b; border-radius: 9999px;
+  padding: 4px 16px 4px 4px; background: rgba(15,23,42,0.8);
+  cursor: pointer; transition: background 200ms, border-color 200ms;
+  color: inherit;
+}
+.nexus-location-btn:hover { background: #1e293b; }
+.nexus-location-btn.connected { border-color: rgba(16,185,129,0.3); background: rgba(6,78,59,0.2); }
+.nexus-location-btn.connected:hover { background: rgba(6,78,59,0.35); }
+
+.nexus-flag-circle {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #1e293b; border: 1px solid #334155;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.nexus-location-info { display: flex; flex-direction: column; align-items: flex-start; padding-right: 14px; }
+.nexus-location-label { font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.nexus-location-value { font-size: 13px; font-weight: 700; color: #e2e8f0; }
+.nexus-location-btn .emerald { color: #10b981; }
+.nexus-location-btn .indigo  { color: #6366f1; }
+
+.nexus-quick-btn, .nexus-ping-btn {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(99,102,241,0.3); border-radius: 9999px;
+  padding: 0 24px; height: 56px;
+  background: rgba(99,102,241,0.08); color: #a5b4fc;
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: background 200ms;
+}
+.nexus-quick-btn:hover { background: rgba(99,102,241,0.16); }
+.nexus-ping-btn { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); color: #6ee7b7; }
+.nexus-ping-btn:hover { background: rgba(16,185,129,0.15); }
+.nexus-ping-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Auto-reconnect toggle ────────────────────────────────────────────────── */
+.nexus-toggle-row {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(15,23,42,0.5); border: 1px solid rgba(30,41,59,0.6);
+  border-radius: 9999px; padding: 6px 16px;
+  font-size: 12px; color: #94a3b8; margin-top: 20px;
+}
+.nexus-toggle {
+  width: 36px; height: 20px; border-radius: 9999px;
+  background: #334155; border: none; cursor: pointer;
+  position: relative; padding: 2px;
+  transition: background 200ms;
+}
+.nexus-toggle.on { background: #6366f1; }
+.nexus-toggle-thumb {
+  display: block; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 200ms;
+}
+.nexus-toggle.on .nexus-toggle-thumb { transform: translateX(16px); }
+
+/* ─── Footer / Stats ───────────────────────────────────────────────────────── */
+.nexus-footer {
+  width: 100%; padding: 16px 24px 20px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 20; min-height: 110px;
+}
+@media (min-width: 768px) { .nexus-footer { padding: 16px 40px 28px; } }
+
+.nexus-footer-label { font-size: 11px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+
+.nexus-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  width: 100%; max-width: 680px;
+  border-top: 1px solid rgba(30,41,59,0.5); padding-top: 14px;
+  animation: fadeUp 0.4s ease;
+}
+.nexus-stat {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.nexus-stat.border-x {
+  border-left: 1px solid rgba(30,41,59,0.5);
+  border-right: 1px solid rgba(30,41,59,0.5);
+}
+.nexus-stat-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.nexus-stat-icon.emerald { background: rgba(16,185,129,0.1); color: #34d399; }
+.nexus-stat-icon.indigo  { background: rgba(99,102,241,0.1); color: #818cf8; }
+.nexus-stat-label { display: block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(52,211,153,0.7); margin-bottom: 2px; }
+.nexus-stat-value { font-size: 20px; font-weight: 700; color: #fff; }
+.nexus-stat-value span { font-size: 11px; color: #94a3b8; margin-left: 2px; }
+
+/* ─── Modal ────────────────────────────────────────────────────────────────── */
+.nexus-overlay {
+  position: absolute; inset: 0; z-index: 50;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+@media (min-width: 768px) { .nexus-overlay { align-items: center; padding: 24px; } }
+
+.nexus-modal {
+  width: 100%; background: #020617;
+  border-radius: 2rem 2rem 0 0; max-height: 85vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@media (min-width: 768px) {
+  .nexus-modal {
+    border-radius: 1.5rem; max-width: 380px; max-height: 85vh;
+    border: 1px solid rgba(30,41,59,0.8);
+  }
+}
+
+.nexus-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 20px 14px; border-bottom: 1px solid rgba(30,41,59,0.5);
+}
+.nexus-modal-header h3 { font-size: 16px; font-weight: 700; }
+.nexus-modal-header p  { font-size: 10px; color: #475569; margin-top: 2px; }
+.nexus-modal-actions { display: flex; gap: 4px; }
+.nexus-modal-actions button {
+  background: none; border: none; cursor: pointer;
+  color: #64748b; padding: 8px; border-radius: 50%;
+  transition: background 150ms, color 150ms;
+}
+.nexus-modal-actions button:hover { background: #1e293b; color: #e2e8f0; }
+.nexus-modal-actions button:disabled { opacity: 0.4; }
+
+.nexus-modal-search {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-bottom: 1px solid rgba(30,41,59,0.5);
+  background: rgba(15,23,42,0.3);
+}
+.nexus-modal-search input {
+  flex: 1; background: none; border: none; outline: none;
+  font-size: 13px; color: #e2e8f0; placeholder-color: #475569;
+}
+.nexus-modal-search svg { color: #475569; flex-shrink: 0; }
+
+.nexus-modal-list { flex: 1; overflow-y: auto; padding: 8px; }
+.nexus-modal-list::-webkit-scrollbar { width: 4px; }
+.nexus-modal-list::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+
+.nexus-list-heading { font-size: 10px; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 10px 6px; }
+
+.nexus-server-row {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 10px; border-radius: 12px; border: 1px solid transparent;
+  background: none; color: inherit; cursor: pointer; margin-bottom: 4px;
+  transition: background 150ms, border-color 150ms;
+  text-align: left;
+}
+.nexus-server-row:hover   { background: rgba(15,23,42,0.8); border-color: rgba(30,41,59,0.8); }
+.nexus-server-row.active  { background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.2); }
+
+.nexus-server-flag { font-size: 22px; width: 40px; height: 40px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(51,65,85,0.5); }
+.nexus-server-info { flex: 1; display: flex; flex-direction: column; }
+.nexus-server-info span:first-child { font-size: 13px; font-weight: 600; color: #cbd5e1; }
+.nexus-server-info span:first-child.active { color: #818cf8; }
+.nexus-server-info span:last-child  { font-size: 11px; color: #475569; }
+
+.nexus-server-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; width: 56px; }
+.nexus-server-ping { display: flex; align-items: center; gap: 3px; font-size: 11px; font-family: monospace; color: #64748b; }
+.nexus-load-bar { width: 100%; height: 3px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+.nexus-load-bar > div { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+.nexus-fav { background: none; border: none; cursor: pointer; color: #64748b; padding: 6px; border-radius: 50%; transition: color 150ms; flex-shrink: 0; }
+.nexus-fav:hover { color: #fbbf24; }
+.nexus-fav.active { color: #fbbf24; }
+
+.nexus-empty { padding: 32px; text-align: center; font-size: 13px; color: #475569; }
+
+/* ─── Keyframes ────────────────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+  50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0.05); }
+}
+@keyframes ripple {
+  0%   { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.65); }
+}
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.nexus-pulse { animation: blink 1s ease-in-out infinite; }
+.nexus-spin  { animation: spin 1s linear infinite; }
+
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes spin  { to { transform: rotate(360deg); } }

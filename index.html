@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+  </head>
+  <body>
+    <script>
+      window.addEventListener('error', function(event) {
+        const errDiv = document.createElement('div');
+        errDiv.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:white;color:red;padding:20px;font-size:18px;max-width:100%;overflow:auto;';
+        errDiv.innerText = 'Runtime Error: ' + event.message + '\n' + event.filename + ':' + event.lineno;
+        document.body.appendChild(errDiv);
+      });
+      window.addEventListener('unhandledrejection', function(event) {
+        const errDiv = document.createElement('div');
+        errDiv.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:white;color:red;padding:20px;font-size:18px;max-width:100%;overflow:auto;';
+        errDiv.innerText = 'Unhandled Promise Rejection: ' + event.reason;
+        document.body.appendChild(errDiv);
+      });
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,6 @@
+{
+  "name": "Simulador de VPN",
+  "description": "Una interfaz gráfica interactiva que simula el funcionamiento y diseño de una aplicación VPN moderna.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
