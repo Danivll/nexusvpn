@@ -12,6 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
@@ -30,6 +31,7 @@ jobs:
 
       - name: Download Cloudflare WARP MSI (Windows)
         if: matrix.os == 'windows-latest'
+        shell: bash
         run: |
           mkdir -p resources
           curl -L -o resources/Cloudflare_WARP_Release-x64.msi https://1111-releases.cloudflareclient.com/windows/Cloudflare_WARP_Release-x64.msi
